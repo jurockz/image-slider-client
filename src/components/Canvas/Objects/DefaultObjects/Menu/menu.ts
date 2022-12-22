@@ -84,11 +84,13 @@ const menu = (objectProps: objectProps): objectR => {
   // update get called 24 fps
   const update = (inputSystem: inputSystemR) => {
     const mouse = inputSystem.getMouse();
+    const pressedInMenu: boolean = Object.keys(mouse.mouseData.pressedAt).includes('sceneMenu')
     const mouseInTriangles: boolean = Boolean(
       mouse.mouseData.mouseAt[name]?.mesh.isInTriangle
     );
+    
     // Is mouse in button? In what button?
-    sessionData._mouseInButton = mouseInTriangles
+    sessionData._mouseInButton = mouseInTriangles && !mouse.mouseData.isPressed || pressedInMenu
       ? mouseInButton(
           mouse.mouseData.mouseVector,
           specificData.buttons,
@@ -102,7 +104,7 @@ const menu = (objectProps: objectProps): objectR => {
 
     if (
       sessionData._mouseInButton &&
-      mouse.mouseData.isPressed &&
+      pressedInMenu &&
       sessionData._mouseInButton !== specificData.activeButton
     ) {
       specificData.activeButton = sessionData._mouseInButton;
