@@ -97,9 +97,14 @@ const menu = (objectProps: objectProps): objectR => {
           objectTransform
         )
       : null;
-
-    if (sessionData._mouseInButton) {
-      inputSystem.changeCursorTo(name, "pointer");
+    if (mouseInTriangles) {
+      if(sessionData._mouseInButton && sessionData._mouseInButton !== specificData.activeButton) {
+        inputSystem.changeCursorTo(name, "pointer");
+      } else {
+        inputSystem.changeCursorTo(name, "default");
+      }
+    } else {
+      inputSystem.changeCursorTo(name, "")
     }
 
     if (
@@ -118,6 +123,7 @@ const menu = (objectProps: objectProps): objectR => {
       sessionData.objectInCreation !== null
     ) {
       sessionData.objectCreater.deleteObject(sessionData.objectInCreation);
+      inputSystem.changeCursorTo(sessionData.objectInCreation, "");
       sessionData.objectInCreation = null;
     }
     if (!objectStillInCreation.isInCreation) {

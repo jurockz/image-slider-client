@@ -81,9 +81,7 @@ const room = (objectProps: objectProps): objectR => {
     const mouseIsInMenu: boolean = Boolean(
       mouse.mouseData.mouseAt["sceneMenu"]?.mesh.isInTriangle
     );
-    if (mouseIsInMenu) {
-      inputSystem.changeCursorTo(name, "default");
-    } else if (!specificData.objectIsSet) {
+    if (!specificData.objectIsSet) {
       // Mouse is in creation & not in menu set to cross
       inputSystem.changeCursorTo(name, "crosshair");
     }
@@ -115,7 +113,8 @@ const room = (objectProps: objectProps): objectR => {
       ) {
         sessionData._roomCreater.setRoomFinished();
         specificData.objectIsSet = sessionData._roomCreater.getIsCreated();
-        inputSystem.changeCursorTo(name, "default");
+        inputSystem.changeCursorTo(name, "");
+        
       } else if (sessionData._roomCreater.getIsCreating()) {
         sessionData._roomCreater.resetCreation();
       }

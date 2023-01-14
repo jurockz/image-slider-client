@@ -146,7 +146,7 @@ const selection = (objectProps: objectProps): objectR => {
         }
       } else {
         sessionData.mode = "selection";
-        inputSystem.changeCursorTo(name, "default");
+        inputSystem.changeCursorTo(name, "");
       }
     }
 
@@ -251,6 +251,7 @@ const selection = (objectProps: objectProps): objectR => {
           .getChildren()
           .forEach((childObject) => {
             sceneObjects.deleteBy({ name: childObject.getObjectName() });
+            inputSystem.changeCursorTo(childObject.getObjectName(), "");
           });
         objectTransform.getRelation().resetChildren();
         objectTransform.setObjectTo({ x: -100, y: -100 });

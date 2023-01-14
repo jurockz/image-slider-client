@@ -3,7 +3,7 @@ import { hierarchyR, sceneObjectsR } from "../hierarchy/hierarchyTypes";
 import { getDataR } from "../Objects/objectTypes";
 import { pointColliderDataI } from "../Objects/Transform/collider/colliderTypes";
 import { vectorI } from "../Objects/Transform/transformTypes";
-import { getKeyR, getMouseR, inputSystemR, mouseDataI } from "./inputTypes";
+import { cursorLineI, getKeyR, getMouseR, inputSystemR, mouseDataI } from "./inputTypes";
 
 const inputSystem = (
   canvas: HTMLElement,
@@ -29,9 +29,31 @@ const inputSystem = (
     key: "",
   };
   let scale: number = 1;
+  let cursorLine: cursorLineI[] = [{changedBy: 'root', cursor: 'default'}]
 
   const changeCursorTo = (whoWantstoChange: string, cursorName: string) => {
-    canvas.style.cursor = cursorName;
+    const whoWantstoChangeIndex: number = cursorLine.findIndex(x => x.changedBy === whoWantstoChange)
+    if(whoWantstoChangeIndex > -1) { // already in 
+      if(cursorName === "") {
+        cursorLine.splice(whoWantstoChangeIndex, 1)
+        return
+      }
+      if(cursorLine[whoWantstoChangeIndex].cursor !== cursorName) {
+        cursorLine[whoWantstoChangeIndex].cursor = cursorName
+        cursorLine.sort((a,b) => a.changedBy === whoWantstoChange ? -1 : b.changedBy === whoWantstoChange ? 1 : 0)
+        return
+      } else {
+        cursorLine.sort((a,b) => a.changedBy === whoWantstoChange ? -1 : b.changedBy === whoWantstoChange ? 1 : 0)
+      }
+      return
+    }
+    
+    if(cursorName !== "") {
+      cursorLine.unshift({
+        changedBy: whoWantstoChange,
+        cursor: cursorName
+      })
+    }
   };
 
   const mouseMove = canvas.addEventListener("mousemove", (event) => {
@@ -147,6 +169,21 @@ const inputSystem = (
     });
   };
 
+  const updateCursor = () => {
+    let toPrint: string = ""
+    cursorLine.forEach(x => toPrint += `${x.cursor} (${x.changedBy}) |`)
+    console.log(toPrint);
+    toPrint = ""
+    if(canvas.style.cursor !== cursorLine[0].cursor) {
+      canvas.style.cursor = cursorLine[0].cursor
+    }
+  }
+
+  const updateInputSystem = () => {
+    updateMouseLocation()
+    updateCursor()
+  }
+
   const getMouse = (): getMouseR => {
     return {
       mouseData,
@@ -167,7 +204,7 @@ const inputSystem = (
   };
 
   return {
-    updateMouseLocation,
+    updateInputSystem,
     getMouse,
     getResize,
     resetMouseWheel,

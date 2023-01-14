@@ -25,7 +25,7 @@ interface mouseDataI {
 }
 
 interface inputSystemR {
-  updateMouseLocation: () => void,
+  updateInputSystem: () => void,
   getMouse: () => getMouseR,
   getResize: () => any,
   resetMouseWheel: () => void,
@@ -33,9 +33,15 @@ interface inputSystemR {
   getKey: () => getKeyR
 }
 
+interface cursorLineI {
+  changedBy: string,
+  cursor: string
+}
+
 export {
   getKeyR,
   getMouseR,
   mouseDataI,
-  inputSystemR
+  inputSystemR,
+  cursorLineI
 }

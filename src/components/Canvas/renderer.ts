@@ -17,7 +17,7 @@ const renderer = (canvas: HTMLCanvasElement): rendererR => {
     // Prevent added Objects to be rendered before they are updated or started
     const renderPriorityListFrameClone: objectR[] = _.clone(sceneObjects.getAll())
     // UPDATE
-    input.updateMouseLocation(); // update mouse location collision
+    input.updateInputSystem(); // update mouse location collision
     renderPriorityListFrameClone.forEach((objectToUpdate) => {
       if (objectToUpdate.getData().sessionData.firstRender) {
         objectToUpdate.start();
