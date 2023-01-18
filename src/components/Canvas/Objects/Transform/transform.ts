@@ -19,12 +19,7 @@ const transform = (transformData: transformProps): transformR => {
   const _meshBox: meshBoxR = meshBox({vertices:_mesh.getVertices()})
 
   let visible: boolean = transformData.visible
-  const _collider: colliderR = collider({mesh:_mesh, meshBox:_meshBox.meshBox, sceneObjects:transformData.sceneObjects, objectName, visible})
   
-  const _origin: originR = origin({meshBox:_meshBox.meshBox})
-  const _relation: relationR = relation({objectName})
-  const _shader: shaderR = shader({mesh:_mesh, meshBox:_meshBox.meshBox})
-
   const setVisible = ({setVisibleTo}: setVisibleProps): void => {
     visible = setVisibleTo
   }
@@ -32,6 +27,12 @@ const transform = (transformData: transformProps): transformR => {
   const getVisible = (): boolean => {
     return visible
   }
+
+  const _collider: colliderR = collider({mesh:_mesh, meshBox:_meshBox.meshBox, sceneObjects:transformData.sceneObjects, objectName, getVisible})
+  
+  const _origin: originR = origin({meshBox:_meshBox.meshBox})
+  const _relation: relationR = relation({objectName})
+  const _shader: shaderR = shader({mesh:_mesh, meshBox:_meshBox.meshBox})
 
   const setObjectTo = (toVector: vectorI): void => {
     const originPos: vertexI = _origin.getOrigin().getVertex() 

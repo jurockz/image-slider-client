@@ -1,7 +1,7 @@
 import _ from "lodash";
 import mouseInButton from "./util/mouseInButton";
 import menuIcons from "./util/menuIcons";
-import { isInCreationReturn, objectCreaterReturn } from "./types";
+import { isInCreationReturn, objectCreaterReturn, sessionDataMenu } from "./menuTypes";
 import objectCreater from "./util/objectCreater";
 import createColor from "../../GeneralObjectUtil/render/createColor";
 import { getDataR, objectProps, objectR } from "../../objectTypes";
@@ -13,6 +13,7 @@ import transform from "../../Transform/transform";
 import { colorI } from "../../GeneralObjectUtil/generalObjectUtilTypes";
 import { inputSystemR } from "../../../InputSystem/inputTypes";
 import { vectorI } from "../../Transform/transformTypes";
+import createRoom from "./util/createRoom";
 
 const menu = (objectProps: objectProps): objectR => {
   const hierarchyDataObject: hierarchyDataObjectI =
@@ -26,26 +27,22 @@ const menu = (objectProps: objectProps): objectR => {
     sceneObjects: sceneObjects,
   });
   const _zIndex: number = hierarchyDataObject.zIndex;
-  const specificData: { buttons: string[]; activeButton: string } = {
+  const specificData: { buttons: string[]; activeButton: string[] } = {
     buttons: ["pointer", "room", "racetrack"],
-    activeButton: "pointer",
+    activeButton: ["pointer"],
   };
-  const sessionData: {
-    firstRender: boolean;
-    _mouseInButton: string;
-    _menuIcons: { getIcon: (imageName: string, selected: boolean) => any };
-    objectCreater: objectCreaterReturn;
-    objectInCreation: string;
-  } = {
+  const sessionData: sessionDataMenu = {
     firstRender: true,
     _mouseInButton: null,
     _menuIcons: null,
     objectCreater: null,
     objectInCreation: null,
+    actionOfIconExecuted: false
   };
 
   const setActiveButton = (buttonName: string = "pointer") => {
-    specificData.activeButton = buttonName;
+    specificData.activeButton.unshift(buttonName);
+    sessionData.actionOfIconExecuted = false
   };
 
   const transferFunctions = {
@@ -85,20 +82,23 @@ const menu = (objectProps: objectProps): objectR => {
   const update = (inputSystem: inputSystemR) => {
     const mouse = inputSystem.getMouse();
     const pressedInMenu: boolean = Object.keys(mouse.mouseData.pressedAt).includes('sceneMenu')
-    const mouseInTriangles: boolean = Boolean(
+    const mouseInMenu: boolean = Boolean(
       mouse.mouseData.mouseAt[name]?.mesh.isInTriangle
     );
     
     // Is mouse in button? In what button?
-    sessionData._mouseInButton = mouseInTriangles && !mouse.mouseData.isPressed || pressedInMenu
+    sessionData._mouseInButton = mouseInMenu && !mouse.mouseData.isPressed || pressedInMenu
       ? mouseInButton(
           mouse.mouseData.mouseVector,
           specificData.buttons,
           objectTransform
         )
       : null;
-    if (mouseInTriangles) {
-      if(sessionData._mouseInButton && sessionData._mouseInButton !== specificData.activeButton) {
+    
+    const mouseInButtonNotActiveButton: boolean = sessionData._mouseInButton !== specificData.activeButton[0]
+    // mouse over button that is not active => change cursor
+    if (mouseInMenu) {
+      if(sessionData._mouseInButton && mouseInButtonNotActiveButton) {
         inputSystem.changeCursorTo(name, "pointer");
       } else {
         inputSystem.changeCursorTo(name, "default");
@@ -106,49 +106,50 @@ const menu = (objectProps: objectProps): objectR => {
     } else {
       inputSystem.changeCursorTo(name, "")
     }
-
+    // define active button on click 
     if (
-      sessionData._mouseInButton &&
       pressedInMenu &&
-      sessionData._mouseInButton !== specificData.activeButton
+      sessionData._mouseInButton &&
+      mouseInButtonNotActiveButton
     ) {
-      specificData.activeButton = sessionData._mouseInButton;
+      specificData.activeButton.unshift(sessionData._mouseInButton);
+      sessionData.actionOfIconExecuted = false
     }
-    // Create Object | only if an object is not in the creation process
-    const objectStillInCreation: isInCreationReturn =
-      sessionData.objectCreater.isInCreation(sessionData.objectInCreation);
-    // previous object has been created => turn Button to pointer
-    if (
-      !["room"].includes(specificData.activeButton) &&
-      sessionData.objectInCreation !== null
-    ) {
-      sessionData.objectCreater.deleteObject(sessionData.objectInCreation);
-      inputSystem.changeCursorTo(sessionData.objectInCreation, "");
-      sessionData.objectInCreation = null;
-    }
-    if (!objectStillInCreation.isInCreation) {
-      // previous object has been created => turn Button to pointer
-      if (objectStillInCreation.activeButtonToPointer) {
-        specificData.activeButton = "pointer";
-        sessionData.objectInCreation = null;
+
+    if(!sessionData.actionOfIconExecuted) {
+      // clear last buttons actions
+      if(specificData.activeButton[1] === "pointer") {
+
       }
-      // Create Room Object
-      if (specificData.activeButton === "room") {
-        sessionData.objectInCreation =
-          sessionData.objectCreater.createObject("room");
+      if(specificData.activeButton[1] === "room") {
+        const roomsData: getDataR = sessionData.objectInCreation.getData()
+        if(!roomsData.specificData.objectIsSet) { // object was not set => delete
+          sceneObjects.deleteBy({ name: roomsData.name})
+          inputSystem.changeCursorTo(roomsData.name, "")
+        }
+        sessionData.objectInCreation = null
       }
-      // open rtSubmenu
-      if (specificData.activeButton === "racetrack") {
+      if(specificData.activeButton[1] === "racetrack") {
+        const rtMenu: getDataR = sceneObjects.getSceneObjectBy({ name: "racetrackMenu" }).getData()
+        rtMenu.objectTransform.setVisible({ setVisibleTo: false });
+        if(rtMenu.sessionData.rtPartInCreation) {
+          sceneObjects.deleteBy({ name: rtMenu.sessionData.rtPartInCreation.getData().name})
+        }
+      }
+      // execute button actions
+      if(specificData.activeButton[0] === "pointer") {
+        
+      }
+      if(specificData.activeButton[0] === "room") {
+        sessionData.objectInCreation = createRoom(sceneObjects)
+      }
+      if(specificData.activeButton[0] === "racetrack") {
         sceneObjects
           .getSceneObjectBy({ name: "racetrackMenu" })
           .getData()
           .objectTransform.setVisible({ setVisibleTo: true });
-      } else {
-        sceneObjects
-          .getSceneObjectBy({ name: "racetrackMenu" })
-          .getData()
-          .objectTransform.setVisible({ setVisibleTo: false });
       }
+      sessionData.actionOfIconExecuted = true // set action as executed
     }
   };
 
@@ -173,9 +174,9 @@ const menu = (objectProps: objectProps): objectR => {
         for (let i = 0; i < specificData.buttons.length; i++) {
           let imageToDraw: HTMLImageElement = null;
           // is active button ?
-          if (specificData.activeButton === specificData.buttons[i]) {
+          if (specificData.activeButton[0] === specificData.buttons[i]) {
             imageToDraw = sessionData._menuIcons.getIcon(
-              specificData.activeButton,
+              specificData.activeButton[0],
               true
             );
           } else {

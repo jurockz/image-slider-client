@@ -15,6 +15,7 @@ import { pointColliderDataI } from "../../Transform/collider/colliderTypes";
 import { colorI } from "../../GeneralObjectUtil/generalObjectUtilTypes";
 import { getKeyR, getMouseR, inputSystemR } from "../../../InputSystem/inputTypes";
 import { vectorI } from "../../Transform/transformTypes";
+import resetSelection from "./util/resetSelection";
 
 const selection = (objectProps: objectProps): objectR => {
   const hierarchyDataObject: hierarchyDataObjectI =
@@ -69,9 +70,9 @@ const selection = (objectProps: objectProps): objectR => {
     // Pointer is not active Button in Menu
     if (
       sceneObjects.getSceneObjectBy({ name: "sceneMenu" }).getData()
-        .specificData.activeButton !== "pointer"
+        .specificData.activeButton[0] !== "pointer"
     ) {
-      objectTransform.getRelation().resetChildren();
+      resetSelection(objectTransform)
       return;
     }
 
@@ -152,23 +153,19 @@ const selection = (objectProps: objectProps): objectR => {
 
     // CHECK
     if (mouseIsNotPressedInMenu && leftMouseButtonIsPressed) {
+      console.log(sessionData.mode);
       // Mode eqals selection
       if (sessionData.mode === "selection") {
         // setSelection
         if (!objectTransform.getOrigin().equals(gridMousePressedAtVector)) {
-          if (Boolean(objectTransform.getRelation().getChildren())) {
-            // Reset selection if objects were selected
-            objectTransform.getRelation().resetChildren();
-            objectTransform.setObjectTo({ x: -100, y: -100 });
-            objectTransform.scaleObjectTo({ to: { x: -99.9, y: -99.9 } });
-          }
+          resetSelection(objectTransform)
           objectTransform.setObjectTo(gridMousePressedAtVector);
           objectTransform.setVisible({ setVisibleTo: true });
         }
         objectTransform.scaleObjectTo({ to: gridMouseVector });
         sessionData.objectsInSelection = objectTransform
           .getCollider()
-          .getMeshCollider({ includes: { types: ["room"] } });
+          .getMeshCollider({ includes: { types: ["room", "racetrackPart"] } });
       }
       if (sessionData.mode === "move") {
         if (!sessionData.lastGridMouseVector)
@@ -265,7 +262,7 @@ const selection = (objectProps: objectProps): objectR => {
     // Pointer is not active Button in Menu
     if (
       sceneObjects.getSceneObjectBy({ name: "sceneMenu" }).getData()
-        .specificData.activeButton !== "pointer"
+        .specificData.activeButton[0] !== "pointer"
     )
       return;
 

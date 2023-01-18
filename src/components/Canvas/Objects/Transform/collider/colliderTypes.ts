@@ -11,7 +11,7 @@ interface colliderProps {
   meshBox: meshR,
   sceneObjects: sceneObjectsR,
   objectName: string,
-  visible: boolean
+  getVisible: () => boolean
 }
 
 interface colliderR {

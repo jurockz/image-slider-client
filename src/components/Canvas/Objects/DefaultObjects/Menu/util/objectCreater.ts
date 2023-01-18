@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { isInCreationReturn } from "../types";
+import { isInCreationReturn } from "../menuTypes";
 import { sceneObjectsR } from "../../../../hierarchy/hierarchyTypes";
 import { objectR } from "../../../objectTypes";
 import roomDefaultData from "../../../PlacableObjects/Room/roomDefaultData";

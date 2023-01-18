@@ -1,3 +1,4 @@
+import { objectR } from "../../objectTypes"
 import { vectorI } from "../../Transform/transformTypes"
 
 interface rtIconI {
@@ -32,7 +33,8 @@ interface rtSubmenuDataI {
 
 interface sessionDataRtSubmenuI {
   firstRender: boolean,
-  rtSubmenuData: rtSubmenuDataI
+  rtSubmenuData: rtSubmenuDataI,
+  rtPartInCreation: objectR
 }
 
 export {

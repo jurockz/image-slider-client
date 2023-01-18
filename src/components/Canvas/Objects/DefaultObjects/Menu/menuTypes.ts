@@ -11,7 +11,17 @@ interface objectCreaterReturn {
   deleteObject: (objectName: string) => void
 }
 
+interface sessionDataMenu {
+  firstRender: boolean,
+  _mouseInButton: string,
+  _menuIcons: { getIcon: (imageName: string, selected: boolean) => any },
+  objectCreater: objectCreaterReturn,
+  objectInCreation: objectR,
+  actionOfIconExecuted: boolean
+}
+
 export {
   objectCreaterReturn,
-  isInCreationReturn
+  isInCreationReturn,
+  sessionDataMenu
 }

@@ -113,6 +113,7 @@ const room = (objectProps: objectProps): objectR => {
       ) {
         sessionData._roomCreater.setRoomFinished();
         specificData.objectIsSet = sessionData._roomCreater.getIsCreated();
+        sceneObjects.getSceneObjectBy({ name: "sceneMenu" }).getData().transferFunctions.setActiveButton()
         inputSystem.changeCursorTo(name, "");
         
       } else if (sessionData._roomCreater.getIsCreating()) {

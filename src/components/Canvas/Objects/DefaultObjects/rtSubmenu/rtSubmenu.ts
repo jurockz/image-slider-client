@@ -10,6 +10,7 @@ import { sessionDataRtSubmenuI } from "./rtSubmenuTypes";
 import createRtSubmenuData from "./util/createRtSubmenuData";
 import { colorI } from "../../GeneralObjectUtil/generalObjectUtilTypes";
 import { inputSystemR } from "../../../InputSystem/inputTypes";
+import createRtPart from "./util/createRtPart";
 
 const rtSubmenu = (objectProps: objectProps): objectR => {
   const hierarchyDataObject: hierarchyDataObjectI =
@@ -29,6 +30,7 @@ const rtSubmenu = (objectProps: objectProps): objectR => {
     rtSubmenuData: createRtSubmenuData(
       objectTransform.getMeshBox().findDirection("lowerRight").getVertex()
     ),
+    rtPartInCreation: null
   };
   const transferFunctions = {};
 
@@ -58,9 +60,27 @@ const rtSubmenu = (objectProps: objectProps): objectR => {
 
   // update get called 24 fps
   const update = (inputSystem: inputSystemR) => {
+    if(sessionData.rtPartInCreation?.getData().specificData.objectIsSet) {
+      sessionData.rtPartInCreation = null
+      sceneObjects.getSceneObjectBy({name:"sceneMenu"}).getData().transferFunctions.setActiveButton()
+    }
+    // if submenu is not visible => return
     if (!objectTransform.getVisible()) return;
-
     const mouse = inputSystem.getMouse();
+    const leftMouseButtonIsPressed: boolean = mouse.mouseData.isPressed && mouse.mouseData.button === 0;
+    const mouseInRtSubmenu: boolean = Boolean(
+      mouse.mouseData.mouseAt[name]?.mesh.isInTriangle
+    );
+    const mouseIsNotPressedInMenu: boolean = !Boolean(
+      mouse.mouseData.pressedAt["sceneMenu"]?.mesh.isInTriangle
+    ) && !mouseInRtSubmenu;
+    
+    // click outside menu => close submenu & active button to pointer
+    if(mouse.mouseData.isPressed && mouseIsNotPressedInMenu) {
+      sceneObjects.getSceneObjectBy({name:"sceneMenu"}).getData().transferFunctions.setActiveButton()
+    }
+
+    // check for mouse in option
     Object.values(sessionData.rtSubmenuData.options).forEach((rtOption) => {
       rtOption.mouseIn = pointInRect({
         point: mouse.mouseData.mouseVector,
@@ -71,6 +91,20 @@ const rtSubmenu = (objectProps: objectProps): objectR => {
         },
       });
     });
+    // handle cursor
+    const mouseInAtLeastOneOption: any = Object.values(sessionData.rtSubmenuData.options).map(value => value.mouseIn).includes(true)
+    if(mouseInAtLeastOneOption) {
+      inputSystem.changeCursorTo(name, "pointer");
+    } else {
+      inputSystem.changeCursorTo(name, "");
+    }
+    // handle click on option
+    if(mouseInRtSubmenu && leftMouseButtonIsPressed && mouseInAtLeastOneOption) {
+      const mouseInOption: string = Object.entries(sessionData.rtSubmenuData.options).filter(value => value[1].mouseIn).map(value => value[0])[0]
+      sessionData.rtPartInCreation = createRtPart(sceneObjects, mouseInOption)
+      objectTransform.setVisible({setVisibleTo:false})
+      inputSystem.changeCursorTo(name, "");
+    }
   };
 
   // update get called 24 fps

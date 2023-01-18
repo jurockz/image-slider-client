@@ -3,9 +3,6 @@ import { edgeDataT } from "../../Transform/Edge/types";
 import { triangleDataT } from "../../Transform/Triangle/types";
 import { vertexDataT } from "../../Transform/Vertex/types";
 
-// startpoint 10, 80
-// width 50
-// height 40
 const vertices: vertexDataT[] = [
   [-100, -100],
   [-100, -99.9],
@@ -24,9 +21,9 @@ const edges: edgeDataT[] = [
   [vertices[0], vertices[2]],
 ];
 
-const selectionData: hierarchyDataObjectI = {
-  name: "sceneSelection",
-  type: "selection",
+const racetrackPartData: hierarchyDataObjectI = {
+  name: "rt_",
+  type: "racetrackPart",
   transform: {
     meshData: {
       verticesData: vertices,
@@ -35,8 +32,11 @@ const selectionData: hierarchyDataObjectI = {
     },
     visible: true,
   },
-  zIndex: 60,
-  specific: {},
+  zIndex: 40,
+  specific: {
+    objectIsSet: false,
+    rtName: ""
+  },
 };
 
-export default selectionData;
+export default racetrackPartData;

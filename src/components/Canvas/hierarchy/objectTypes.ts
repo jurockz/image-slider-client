@@ -3,6 +3,7 @@ import menu from "../Objects/DefaultObjects/Menu/menu";
 import origin from "../Objects/DefaultObjects/Origin/origin";
 import rtSubmenu from "../Objects/DefaultObjects/rtSubmenu/rtSubmenu";
 import selection from "../Objects/DefaultObjects/Selection/selection";
+import racetrackPart from "../Objects/PlacableObjects/RacetrackPart/racetrackPart";
 import room from "../Objects/PlacableObjects/Room/room";
 
 export default {
@@ -12,4 +13,5 @@ export default {
   selection: selection,
   room: room,
   rtSubmenu: rtSubmenu,
+  racetrackPart: racetrackPart
 };

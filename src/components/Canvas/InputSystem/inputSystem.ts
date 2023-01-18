@@ -133,7 +133,7 @@ const inputSystem = (
       .transferFunctions.canvasVectorToGridVector(mouseData.mouseVector);
     sceneObjects.getAll().forEach((objectToCheck) => {
       const objectData: getDataR = objectToCheck.getData();
-      if (["sceneMenu", "sceneOrigin"].includes(objectData.name)) {
+      if (["sceneMenu", "racetrackMenu", "sceneOrigin"].includes(objectData.name)) {
         // uses normal mouseVector
         const collisionData: pointColliderDataI = objectData.objectTransform
           .getCollider()
@@ -170,10 +170,10 @@ const inputSystem = (
   };
 
   const updateCursor = () => {
-    let toPrint: string = ""
-    cursorLine.forEach(x => toPrint += `${x.cursor} (${x.changedBy}) |`)
-    console.log(toPrint);
-    toPrint = ""
+    // let toPrint: string = ""
+    // cursorLine.forEach(x => toPrint += `${x.cursor} (${x.changedBy}) |`)
+    // console.log(toPrint);
+    // toPrint = ""
     if(canvas.style.cursor !== cursorLine[0].cursor) {
       canvas.style.cursor = cursorLine[0].cursor
     }

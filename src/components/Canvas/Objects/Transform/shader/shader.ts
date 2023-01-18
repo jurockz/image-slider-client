@@ -80,29 +80,29 @@ const shader = ({mesh, meshBox}: shaderProps): shaderR => {
     })
   }
 
- const renderVertex = ({
-  ctx, 
-  vertex, 
-  radius,
-  filled=true, 
-  fillColor=renderMeshDefaultFillColor, 
-  stroke=true, 
-  strokeColor=renderMeshDefaultStrokeColor,
-  lineWidth=1,
-  lineDash=[]
- }: renderVertexProps) => {
-  const vertexCoord: vertexI = vertex.getVertex()
-  ctx.save()
-  ctx.beginPath()
-  ctx.arc(vertexCoord.x, vertexCoord.y, radius, 0, 2 * Math.PI)
-  ctx.fillStyle = fillColor.colorString
-  filled && ctx.fill()
-  ctx.lineWidth = lineWidth
-  ctx.strokeStyle = strokeColor.colorString
-  ctx.setLineDash(lineDash)
-  stroke && ctx.stroke()
-  ctx.restore()
- }
+  const renderVertex = ({
+    ctx, 
+    vertex, 
+    radius,
+    filled=true, 
+    fillColor=renderMeshDefaultFillColor, 
+    stroke=true, 
+    strokeColor=renderMeshDefaultStrokeColor,
+    lineWidth=1,
+    lineDash=[]
+  }: renderVertexProps) => {
+    const vertexCoord: vertexI = vertex.getVertex()
+    ctx.save()
+    ctx.beginPath()
+    ctx.arc(vertexCoord.x, vertexCoord.y, radius, 0, 2 * Math.PI)
+    ctx.fillStyle = fillColor.colorString
+    filled && ctx.fill()
+    ctx.lineWidth = lineWidth
+    ctx.strokeStyle = strokeColor.colorString
+    ctx.setLineDash(lineDash)
+    stroke && ctx.stroke()
+    ctx.restore()
+  }
 
   return {
     renderMesh,

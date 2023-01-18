@@ -9,7 +9,7 @@ import { vertexDataT, vertexI, vertexR } from "../Vertex/types";
 import { colliderProps, pointColliderDataI, colliderR, checkMeshCollisionProps, getMeshColliderProps, pointInVerticesProps, pointInVertexProps, pointInEdgesProps, pointInTrianglesProps, getPointColliderProps, edgeIntersectsEdgeProps, meshIntersectionProps } from "./colliderTypes";
 import calculateTrisArea from "./util/calculateTrisArea";
 
-const collider = ({mesh, meshBox, sceneObjects, objectName, visible}: colliderProps): colliderR => {
+const collider = ({mesh, meshBox, sceneObjects, objectName, getVisible}: colliderProps): colliderR => {
 
   const getPointCollider = ({pointToCheck, vertexCollisionRadius=1, edgeColliosionDistance=1}: getPointColliderProps): pointColliderDataI => {
     const pointColliderInfo: pointColliderDataI = {
@@ -30,7 +30,7 @@ const collider = ({mesh, meshBox, sceneObjects, objectName, visible}: colliderPr
         inEdges: []
       }
     }
-    if(!visible) return pointColliderInfo
+    if(!getVisible()) return pointColliderInfo
     
     // check Meshbox first
     pointColliderInfo.meshBox.inTriangles = pointInTriangles({point:pointToCheck, meshToCheck:meshBox})
@@ -57,7 +57,7 @@ const collider = ({mesh, meshBox, sceneObjects, objectName, visible}: colliderPr
   }
 
   const getMeshCollider = ({includes=undefined, excludes={names: []}}: getMeshColliderProps): objectR[] => {
-    if(!visible) return []
+    if(!getVisible()) return []
     if(!excludes.names) excludes.names = []
     excludes.names.push(objectName)
     return sceneObjects.getAllFilteredBy({includes, excludes}).filter(objectToCheck => {
