@@ -1,6 +1,7 @@
 import _ from "lodash"
 import { edgeDataT } from "../Edge/types"
 import { vectorI } from "../transformTypes"
+import roundVector from "../util/roundVector"
 import { triangleDataT, triangleProps, triangleR, triangleT } from "./types"
 
 const triangle = ({vertices, triangleData}: triangleProps): triangleR => {
@@ -24,9 +25,9 @@ const triangle = ({vertices, triangleData}: triangleProps): triangleR => {
   }
 
   const moveTriangle = (triangleVector: vectorI): void => {
-    _triangle[0].moveVertex(triangleVector)
-    _triangle[1].moveVertex(triangleVector)
-    _triangle[2].moveVertex(triangleVector)
+    _triangle[0].moveVertex(roundVector(triangleVector, 6))
+    _triangle[1].moveVertex(roundVector(triangleVector, 6))
+    _triangle[2].moveVertex(roundVector(triangleVector, 6))
   }
 
   const equals = (equalsTriangleData: triangleDataT): boolean => {

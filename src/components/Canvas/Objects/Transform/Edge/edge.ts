@@ -4,6 +4,7 @@ import { vectorI } from "../transformTypes"
 import { vertexDataT } from "../Vertex/types"
 import { edgeDataT, edgeProps, edgeR, edgeT } from "./types"
 import isEdgeInTriangle from "./util/isEdgeInTriangle"
+import roundVector from "../util/roundVector"
 
 // data in [[x,y],[x,y]]
 const edge = ({vertices, triangles, edgeData}: edgeProps): edgeR => {
@@ -60,8 +61,8 @@ const edge = ({vertices, triangles, edgeData}: edgeProps): edgeR => {
   }
 
   const moveEdge = (egdeVector: vectorI) => {
-    _edge[0].moveVertex(egdeVector)
-    _edge[1].moveVertex(egdeVector)
+    _edge[0].moveVertex(roundVector(egdeVector, 6))
+    _edge[1].moveVertex(roundVector(egdeVector, 6))
   }
 
   const equals = (equalsEdgeData: edgeDataT) => {

@@ -1,6 +1,6 @@
 import { hierarchyDataObjectI, sceneObjectsR } from "../../../hierarchy/hierarchyTypes";
 import { getMouseR, inputSystemR } from "../../../InputSystem/inputTypes";
-import { getDataR, objectProps, objectR } from "../../objectTypes";
+import { getDataR, objectProps, objectR, renderProps, updateProps } from "../../objectTypes";
 import transform from "../../Transform/transform";
 import { transformR, vectorI } from "../../Transform/transformTypes";
 import {
@@ -58,7 +58,8 @@ const racetrackPart = (objectProps: objectProps): objectR => {
   };
 
   // update get called 24 fps
-  const update = (inputSystem: inputSystemR) => {
+  const update = (props: updateProps) => {
+    const inputSystem: inputSystemR = props.InputSystem
     const originObject: objectR = sceneObjects.getSceneObjectBy({
       name: "sceneOrigin",
     });
@@ -71,29 +72,25 @@ const racetrackPart = (objectProps: objectProps): objectR => {
     if(!specificData.objectIsSet) {
       objectTransform.setObjectTo({x:gridMouseVector.x, y:gridMouseVector.y})
     }
-    // only make rt when mouse is pressed in grid
-    const mouseIsNotPressedInMenu: boolean = !Boolean(
-      mouse.mouseData.pressedAt["sceneMenu"]?.mesh.isInTriangle
-    ) && !Boolean(
-      mouse.mouseData.pressedAt["racetrackMenu"]?.mesh.isInTriangle
-    );
     // left mouse button is pressed
     const leftMouseButtonIsPressed: boolean =
       mouse.mouseData.isPressed && mouse.mouseData.button === 0;
-    if(mouseIsNotPressedInMenu && leftMouseButtonIsPressed) {
+    if(leftMouseButtonIsPressed) {
       sessionData.isMouseReleasedTrigger = false;
     }
 
     // left mouse button is not pressed & mouse release was not triggered yet
     if (!leftMouseButtonIsPressed && !sessionData.isMouseReleasedTrigger) {
       specificData.objectIsSet = true
+      props.setMenuBtn("pointer")
       // mouse release was triggered => set true till next click
       sessionData.isMouseReleasedTrigger = true;
     }
   };
 
   // update get called 24 fps
-  const render = (ctx: CanvasRenderingContext2D) => {
+  const render = (props: renderProps) => {
+    const ctx: CanvasRenderingContext2D = props.ctx
     const rtOrigin: vectorI = objectTransform.getOrigin().getVertex()
     const imageData: rtImageI = getRtImage(specificData.rtName)
     ctx.drawImage(imageData.image, rtOrigin.x, rtOrigin.y, imageData.imgWidth, imageData.imgHeight)

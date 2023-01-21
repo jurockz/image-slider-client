@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { hierarchyR, sceneObjectsR } from "../hierarchy/hierarchyTypes";
+import { sceneObjectsR } from "../hierarchy/hierarchyTypes";
 import { getDataR } from "../Objects/objectTypes";
 import { pointColliderDataI } from "../Objects/Transform/collider/colliderTypes";
 import { vectorI } from "../Objects/Transform/transformTypes";
@@ -7,7 +7,7 @@ import { cursorLineI, getKeyR, getMouseR, inputSystemR, mouseDataI } from "./inp
 
 const inputSystem = (
   canvas: HTMLElement,
-  hierarchy: hierarchyR
+  sceneObjects: sceneObjectsR
 ): inputSystemR => {
   let mouseData: mouseDataI = {
     mouseVector: { x: 0, y: 0 },
@@ -126,8 +126,7 @@ const inputSystem = (
 
   const updateMouseLocation = (): void => {
     mouseData.mouseAt = {}; // reset
-    const sceneObjects: sceneObjectsR = hierarchy.getSceneObjects();
-    const gridMouseLocation: vectorI = sceneObjects
+    const gridMouseLocation: vectorI = sceneObjects // ?????
       .getSceneObjectBy({ name: "sceneOrigin" })
       .getData()
       .transferFunctions.canvasVectorToGridVector(mouseData.mouseVector);
@@ -170,10 +169,6 @@ const inputSystem = (
   };
 
   const updateCursor = () => {
-    // let toPrint: string = ""
-    // cursorLine.forEach(x => toPrint += `${x.cursor} (${x.changedBy}) |`)
-    // console.log(toPrint);
-    // toPrint = ""
     if(canvas.style.cursor !== cursorLine[0].cursor) {
       canvas.style.cursor = cursorLine[0].cursor
     }

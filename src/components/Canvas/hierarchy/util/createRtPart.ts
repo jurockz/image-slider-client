@@ -1,7 +1,7 @@
 import _ from "lodash";
-import { sceneObjectsR } from "../../../../hierarchy/hierarchyTypes";
-import { objectR } from "../../../objectTypes";
-import racetrackPartData from "../../../PlacableObjects/RacetrackPart/racetrackPartDefaultData";
+import { objectR } from "../../Objects/objectTypes";
+import racetrackPartData from "../../Objects/PlacableObjects/RacetrackPart/racetrackPartDefaultData";
+import { sceneObjectsR } from "../hierarchyTypes";
 
 let rtCount: number = 0;
 

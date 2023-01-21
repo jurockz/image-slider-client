@@ -1,7 +1,7 @@
 import renderGrid from "./renderUtil/renderGrid";
 import _ from "lodash";
 import { gridSessionDataI, gridTransferFunctionsInterface } from "./gridTypes";
-import { getDataR, objectProps, objectR } from "../../objectTypes";
+import { getDataR, objectProps, objectR, renderProps, updateProps } from "../../objectTypes";
 import {
   hierarchyDataObjectI,
   sceneObjectsR,
@@ -77,7 +77,8 @@ const grid = (objectProps: objectProps): objectR => {
   const start = () => {};
 
   // update get called 24 fps
-  const update = (inputSystem: inputSystemR) => {
+  const update = (props: updateProps) => {
+    const inputSystem: inputSystemR = props.InputSystem
     const originData: getDataR = sceneObjects
       .getSceneObjectBy({ name: "sceneOrigin" })
       .getData();
@@ -109,7 +110,8 @@ const grid = (objectProps: objectProps): objectR => {
   };
 
   // update get called 24 fps
-  const render = (ctx: CanvasRenderingContext2D) => {
+  const render = (props: renderProps) => {
+    const ctx: CanvasRenderingContext2D = props.ctx
     const originData: getDataR = sceneObjects
       .getSceneObjectBy({ name: "sceneOrigin" })
       .getData();

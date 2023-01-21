@@ -12,7 +12,6 @@ interface selectionSessionDataInterface {
   mode: string;
   lastGridMouseVector: vectorI;
   selectionTransformAllowed: boolean;
-  crossImage: HTMLImageElement;
   objectsInSelection: objectR[];
   activeCorner: vertexR;
 }

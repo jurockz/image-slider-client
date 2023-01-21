@@ -7,6 +7,8 @@ import { vertexDataT, vertexI, vertexR } from "../Vertex/types"
 import vertex from "../Vertex/vertex"
 import { meshProps, meshR, scaleToOriginProps, splitEdgeProps } from "./types"
 import calculateBorder from "./util/calculateBorder"
+import roundVector from "../util/roundVector"
+import checkStructure from "./util/checkStructure"
 
 // vertices: [vertice,...], triangles: [[three vertices],..], edges: [vertice,vertice,triangle,triangle]
 const mesh = ({verticesData, trianglesData, edgesData}: meshProps): meshR => {
@@ -16,7 +18,7 @@ const mesh = ({verticesData, trianglesData, edgesData}: meshProps): meshR => {
   const border: vertexR[][] = calculateBorder(edges)
 
   const moveMesh = ({x, y}: vectorI): void => {
-    vertices.forEach(vertex => vertex.moveVertex({x, y}))
+    vertices.forEach(vertex => vertex.moveVertex(roundVector({x, y}, 6)))
   }
 
   const removeTriangle = (triangleToRemove: triangleR): void => {
@@ -83,8 +85,6 @@ const mesh = ({verticesData, trianglesData, edgesData}: meshProps): meshR => {
     }
     // prevent unnecessary scale
     if(fromRelativeToOrigin.x === 0 && fromRelativeToOrigin.y === 0) return
-    // prevent loosing mesh structure
-    if(originVertex.x === to.x || originVertex.y === to.y) return
     
     const toRelativeToOrigin: vectorI = {
       x: to.x - originVertex.x,
@@ -94,6 +94,9 @@ const mesh = ({verticesData, trianglesData, edgesData}: meshProps): meshR => {
       xPc: (fromRelativeToOrigin.x - toRelativeToOrigin.x) / fromRelativeToOrigin.x,
       yPc: (fromRelativeToOrigin.y - toRelativeToOrigin.y) / fromRelativeToOrigin.y
     }
+    // c
+    const structureOk: boolean = checkStructure(originVertex, vertices, percentageScale)
+    if(!structureOk) return;
 
     vertices.forEach(vertexToScale => {
       const vertexToScaleCoord: vertexI = vertexToScale.getVertex()
@@ -105,7 +108,11 @@ const mesh = ({verticesData, trianglesData, edgesData}: meshProps): meshR => {
         x: -(percentageScale.xPc * vertexRelativeToOrigin.x),
         y: -(percentageScale.yPc * vertexRelativeToOrigin.y)
       }
-      vertexToScale.moveVertex(moveVector)
+      const newVertex: vectorI = roundVector({
+        x: vertexToScaleCoord.x + moveVector.x,
+        y: vertexToScaleCoord.y + moveVector.y
+      }, 6)
+      vertexToScale.setVertex(newVertex)
     })
   }
 

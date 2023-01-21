@@ -23,12 +23,24 @@ interface getDataR {
   transferFunctions: any;
 }
 
+interface updateProps {
+  InputSystem: inputSystemR,
+  activeMenuBtn: string,
+  setMenuBtn: React.Dispatch<React.SetStateAction<string>>
+}
+
+interface renderProps {
+  ctx: CanvasRenderingContext2D,
+  activeMenuBtn: string,
+  setMenuBtn: React.Dispatch<React.SetStateAction<string>>
+}
+
 interface objectR {
   getData: () => getDataR;
   getZIndex: () => number;
   start: () => void;
-  update: (InputSystem: inputSystemR) => void;
-  render: (ctx: CanvasRenderingContext2D) => void;
+  update: (props: updateProps) => void;
+  render: (props: renderProps) => void;
 }
 
-export { objectProps, getDataR, objectR };
+export { objectProps, getDataR, objectR, updateProps, renderProps };

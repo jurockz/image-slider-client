@@ -6,7 +6,6 @@ interface roomSpecificDataInterface {
 
 interface roomSessionDataInterface {
   firstRender: boolean,
-  crossImage: HTMLImageElement,
   _roomCreater: roomCreaterReturn,
   isMouseReleasedTrigger: boolean,
   mouseIsInRoom: boolean

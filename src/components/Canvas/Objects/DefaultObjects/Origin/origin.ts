@@ -7,7 +7,7 @@ import {
 import handleMouseScaleUpdate from "./util/handleMouseScaleUpdate";
 import resetPerFrameVariables from "./util/resetPerFrameVariables";
 import transform from "../../Transform/transform";
-import { getDataR, objectProps, objectR } from "../../objectTypes";
+import { getDataR, objectProps, objectR, renderProps, updateProps } from "../../objectTypes";
 import {
   hierarchyDataObjectI,
   sceneObjectsR,
@@ -123,7 +123,8 @@ const origin = (objectProps: objectProps): objectR => {
     sessionData.scalar = scalarSum
   };
 
-  const update = (inputSystem: inputSystemR) => {
+  const update = (props: updateProps) => {
+    const inputSystem: inputSystemR = props.InputSystem
     const mouse: getMouseR = inputSystem.getMouse();
     // mouse in Menu?
     const mouseIsNotPressedInMenu: boolean = !Boolean(
@@ -190,7 +191,8 @@ const origin = (objectProps: objectProps): objectR => {
     }
   };
 
-  const render = (ctx: CanvasRenderingContext2D) => {
+  const render = (props: renderProps) => {
+    const ctx: CanvasRenderingContext2D = props.ctx
     ctx.translate(sessionData.translateVector.x, sessionData.translateVector.y);
     ctx.scale(sessionData.scalar, sessionData.scalar);
   };

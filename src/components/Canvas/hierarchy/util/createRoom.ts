@@ -1,7 +1,7 @@
 import _ from "lodash";
-import { sceneObjectsR } from "../../../../hierarchy/hierarchyTypes";
-import { objectR } from "../../../objectTypes";
-import roomDefaultData from "../../../PlacableObjects/Room/roomDefaultData";
+import { sceneObjectsR } from "../hierarchyTypes";
+import roomDefaultData from "../../Objects/PlacableObjects/Room/roomDefaultData"
+import { objectR } from "../../Objects/objectTypes";
 
 let roomCount: number = 0;
 

@@ -3,9 +3,8 @@ import {
   selectionSessionDataInterface,
   selectionSpecificDataInterface,
 } from "./SelectionTypes";
-import crossImagePath from "../../../../../assets/images/cross.png";
 import _ from "lodash";
-import { getDataR, objectProps, objectR } from "../../objectTypes";
+import { getDataR, objectProps, objectR, renderProps, updateProps } from "../../objectTypes";
 import {
   hierarchyDataObjectI,
   sceneObjectsR,
@@ -38,7 +37,6 @@ const selection = (objectProps: objectProps): objectR => {
     mode: "selection",
     lastGridMouseVector: null,
     selectionTransformAllowed: true,
-    crossImage: new Image(),
     objectsInSelection: [],
     activeCorner: null,
   };
@@ -61,20 +59,14 @@ const selection = (objectProps: objectProps): objectR => {
   };
 
   const start = () => {
-    // init Images
-    sessionData.crossImage.src = crossImagePath;
   };
 
   // update get called 24 fps
-  const update = (inputSystem: inputSystemR) => {
+  const update = (props: updateProps) => {
+    const inputSystem: inputSystemR = props.InputSystem
+    const activeMenuBtn: string = props.activeMenuBtn
     // Pointer is not active Button in Menu
-    if (
-      sceneObjects.getSceneObjectBy({ name: "sceneMenu" }).getData()
-        .specificData.activeButton[0] !== "pointer"
-    ) {
-      resetSelection(objectTransform)
-      return;
-    }
+    if (activeMenuBtn !== "pointer") return;
 
     // Mouse Locations
     const mouse: getMouseR = inputSystem.getMouse();
@@ -153,7 +145,6 @@ const selection = (objectProps: objectProps): objectR => {
 
     // CHECK
     if (mouseIsNotPressedInMenu && leftMouseButtonIsPressed) {
-      console.log(sessionData.mode);
       // Mode eqals selection
       if (sessionData.mode === "selection") {
         // setSelection
@@ -258,13 +249,11 @@ const selection = (objectProps: objectProps): objectR => {
   };
 
   // update get called 24 fps
-  const render = (ctx: CanvasRenderingContext2D) => {
+  const render = (props: renderProps) => {
+    const ctx: CanvasRenderingContext2D = props.ctx
+    const activeMenuBtn: string = props.activeMenuBtn
     // Pointer is not active Button in Menu
-    if (
-      sceneObjects.getSceneObjectBy({ name: "sceneMenu" }).getData()
-        .specificData.activeButton[0] !== "pointer"
-    )
-      return;
+    if (activeMenuBtn !== "pointer") return;
 
     const blueColor: colorI = createColor(71, 86, 223);
     const whiteColor: colorI = createColor(255, 255, 255);

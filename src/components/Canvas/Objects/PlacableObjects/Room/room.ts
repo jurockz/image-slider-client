@@ -2,14 +2,13 @@ import {
   hierarchyDataObjectI,
   sceneObjectsR,
 } from "../../../hierarchy/hierarchyTypes";
-import { getDataR, objectProps, objectR } from "../../objectTypes";
+import { getDataR, objectProps, objectR, renderProps, updateProps } from "../../objectTypes";
 import transform from "../../Transform/transform";
 import { transformR, vectorI } from "../../Transform/transformTypes";
 import {
   roomSessionDataInterface,
   roomSpecificDataInterface,
 } from "./roomTypes";
-import crossImagePath from "../../../../../assets/images/cross.png";
 import roomCreater from "./roomCreater/roomCreater";
 import createColor from "../../GeneralObjectUtil/render/createColor";
 import { colorI } from "../../GeneralObjectUtil/generalObjectUtilTypes";
@@ -32,7 +31,6 @@ const room = (objectProps: objectProps): objectR => {
   };
   const sessionData: roomSessionDataInterface = {
     firstRender: true,
-    crossImage: new Image(),
     _roomCreater: roomCreater(objectTransform),
     isMouseReleasedTrigger: false,
     mouseIsInRoom: false,
@@ -56,11 +54,16 @@ const room = (objectProps: objectProps): objectR => {
   };
 
   const start = () => {
-    sessionData.crossImage.src = crossImagePath;
   };
 
   // update get called 24 fps
-  const update = (inputSystem: inputSystemR) => {
+  const update = (props: updateProps) => {
+    const inputSystem: inputSystemR = props.InputSystem
+    if(props.activeMenuBtn !== "room" && !specificData.objectIsSet) {
+      inputSystem.changeCursorTo(name, "")
+      sceneObjects.deleteBy({name})
+      return
+    }
     const originObject: objectR = sceneObjects.getSceneObjectBy({
       name: "sceneOrigin",
     });
@@ -77,10 +80,6 @@ const room = (objectProps: objectProps): objectR => {
       );
     sessionData.mouseIsInRoom = Boolean(mouse.mouseData.mouseAt[name]);
 
-    // mouse is in menu => set cursor to default
-    const mouseIsInMenu: boolean = Boolean(
-      mouse.mouseData.mouseAt["sceneMenu"]?.mesh.isInTriangle
-    );
     if (!specificData.objectIsSet) {
       // Mouse is in creation & not in menu set to cross
       inputSystem.changeCursorTo(name, "crosshair");
@@ -113,7 +112,7 @@ const room = (objectProps: objectProps): objectR => {
       ) {
         sessionData._roomCreater.setRoomFinished();
         specificData.objectIsSet = sessionData._roomCreater.getIsCreated();
-        sceneObjects.getSceneObjectBy({ name: "sceneMenu" }).getData().transferFunctions.setActiveButton()
+        props.setMenuBtn("pointer")
         inputSystem.changeCursorTo(name, "");
         
       } else if (sessionData._roomCreater.getIsCreating()) {
@@ -126,7 +125,8 @@ const room = (objectProps: objectProps): objectR => {
   };
 
   // update get called 24 fps
-  const render = (ctx: CanvasRenderingContext2D) => {
+  const render = (props: renderProps) => {
+    const ctx: CanvasRenderingContext2D = props.ctx
     if (
       sessionData._roomCreater.getIsCreating() ||
       sessionData._roomCreater.getIsCreated()
